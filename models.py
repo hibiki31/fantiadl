@@ -352,7 +352,7 @@ class FantiaDownloader:
     def download_thumbnail(self, thumb_url, post_directory):
         """Download a thumbnail to the post's directory."""
         extension = self.process_content_type(thumb_url)
-        filename = os.path.join(post_directory, "thumb" + extension)
+        filename = os.path.join(post_directory + extension)
         self.perform_download(thumb_url, filename, server_filename=self.use_server_filenames)
 
     def download_post(self, post_id):
@@ -368,7 +368,7 @@ class FantiaDownloader:
         post_title = post_json["title"]
         post_contents = post_json["post_contents"]
 
-        post_directory_title = sanitize_for_path(str(post_id))
+        post_directory_title = sanitize_for_path(str(post_id)) + '_' + sanitize_for_path(str(post_title))
 
         post_directory = os.path.join(self.directory, sanitize_for_path(post_creator), post_directory_title)
         os.makedirs(post_directory, exist_ok=True)
