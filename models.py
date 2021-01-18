@@ -4,6 +4,7 @@
 from bs4 import BeautifulSoup
 import requests
 
+from dateutil import parser
 from datetime import datetime as dt
 from urllib.parse import unquote
 from urllib.parse import urljoin
@@ -368,10 +369,16 @@ class FantiaDownloader:
         post_title = post_json["title"]
         post_contents = post_json["post_contents"]
 
-        post_directory_title = sanitize_for_path(str(post_id)) + '_' + sanitize_for_path(str(post_title))
+        post_date = parser.parse(post_json["posted_at"]).strftime("%Y-%m%d")
+
+        post_directory_title = sanitize_for_path(post_date + '_' + str(post_id)) + '_' + sanitize_for_path(str(post_title))
 
         post_directory = os.path.join(self.directory, sanitize_for_path(post_creator), post_directory_title)
+
         os.makedirs(post_directory, exist_ok=True)
+
+        with open(os.path.join(post_directory, "metadata.json"), 'w') as f:
+            json.dump(post_json, f, indent=4)
 
         if self.dump_metadata:
             self.save_metadata(post_json, post_directory)
